@@ -1,0 +1,17 @@
+{
+  "name": "lens-booking-studio",
+  "version": "1.0.0",
+  "description": "Photographer portfolio, package booking and conflict-aware schedule manager",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "HOLD_TTL_MS=5000 node server.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": ["photography", "booking", "scheduling", "portfolio"],
+  "license": "MIT"
+}

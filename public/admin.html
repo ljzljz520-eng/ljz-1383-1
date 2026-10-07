@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lumen Studio 管理后台</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="sidebar">
+      <h2>Lumen Admin</h2>
+      <div id="loginBox">
+        <input id="adminToken" type="password" placeholder="Bearer Token" />
+        <button class="button small" id="loginBtn">登录</button>
+      </div>
+      <nav style="display:grid;margin-top:22px;color:inherit">
+        <button data-tab="bookings" class="active">预约与冲突</button>
+        <button data-tab="schedule">档期维护</button>
+        <button data-tab="packages">套餐版本</button>
+        <button data-tab="resources">资源</button>
+        <button data-tab="content">照片授权</button>
+        <button data-tab="audit">改期/操作记录</button>
+      </nav>
+    </aside>
+    <main class="admin-main">
+      <header class="section-heading">
+        <div><p class="eyebrow">Admin</p><h1 id="pageTitle">预约与冲突</h1></div>
+        <button class="button ghost small" id="refreshBtn">刷新并处理到期</button>
+      </header>
+      <div id="message"></div>
+
+      <section id="tab-bookings" class="tab">
+        <div class="admin-grid" id="bookingCards"></div>
+        <div class="card form" style="margin-top:22px">
+          <h3>人工改期</h3>
+          <p class="hint">若交通、布置或正式拍摄占用已经开始，系统拒绝取消或改期。强制覆盖仅针对资源/营业时间冲突，并保留解释和记录。</p>
+          <div class="grid-two">
+            <label>预约号<input id="rsId" placeholder="BK-00001" /></label>
+            <label>时区<input id="rsTz" value="Asia/Shanghai" /></label>
+            <label>新本地开始<input id="rsStart" type="datetime-local" /></label>
+            <label>原因<input id="rsReason" placeholder="客户改期 / 天气 / 设备调整" /></label>
+          </div>
+          <label class="check"><input id="rsForce" type="checkbox" /> 我已查看冲突，强制覆盖</label>
+          <button class="button primary" id="rescheduleBtn">提交改期</button>
+        </div>
+      </section>
+
+      <section id="tab-schedule" class="tab hidden">
+        <div class="card form">
+          <h3>营业时区与每周时间</h3>
+          <label>时区<input id="scheduleTz" /></label>
+          <div id="weeklyRows"></div>
+          <button class="button primary" id="saveScheduleBtn">保存周期规则</button>
+        </div>
+        <div class="card form" style="margin-top:18px">
+          <h3>特殊日期</h3>
+          <div class="grid-two">
+            <label>日期<input id="ovDate" type="date" /></label>
+            <label>原因<input id="ovReason" placeholder="国庆休 / 临时开放" /></label>
+            <label>开放开始<input id="ovStart" type="time" value="10:00" /></label>
+            <label>开放结束<input id="ovEnd" type="time" value="16:00" /></label>
+          </div>
+          <label class="check"><input id="ovClosed" type="checkbox" checked /> 全日封闭</label>
+          <div>
+            <button class="button primary" id="addOverrideBtn">保存日期规则</button>
+          </div>
+          <div id="overrideList" class="table-wrap"></div>
+        </div>
+        <div class="card form" style="margin-top:18px">
+          <h3>人工占用/封闭资源</h3>
+          <div class="grid-two">
+            <label>标题<input id="blockTitle" placeholder="设备维修 / 外出布展" /></label>
+            <label>时区<input id="blockTz" value="Asia/Shanghai" /></label>
+            <label>开始<input id="blockStart" type="datetime-local" /></label>
+            <label>结束<input id="blockEnd" type="datetime-local" /></label>
+            <label>提前缓冲（分钟）<input id="blockBefore" type="number" value="0" /></label>
+            <label>收尾缓冲（分钟）<input id="blockAfter" type="number" value="0" /></label>
+          </div>
+          <label class="check"><input id="blockAll" type="checkbox" checked /> 封闭全部资源</label>
+          <div id="resourcePick" class="grid-two"></div>
+          <button class="button primary" id="addBlockBtn">加入后台占用</button>
+          <div id="blockList" class="table-wrap"></div>
+        </div>
+      </section>
+
+      <section id="tab-packages" class="tab hidden">
+        <div id="packageEditor" class="admin-grid"></div>
+      </section>
+
+      <section id="tab-resources" class="tab hidden">
+        <div id="resourceList" class="table-wrap card"></div>
+        <form id="resourceForm" class="card form">
+          <h3>新增资源</h3>
+          <div class="grid-two">
+            <label>名称<input id="newResourceName" required /></label>
+            <label>类型<input id="newResourceKind" placeholder="photographer / camera" /></label>
+          </div>
+          <button class="button primary">新增</button>
+        </form>
+      </section>
+
+      <section id="tab-content" class="tab hidden">
+        <div id="licensePanel" class="admin-grid"></div>
+      </section>
+
+      <section id="tab-audit" class="tab hidden">
+        <div id="auditPanel" class="table-wrap card"></div>
+      </section>
+    </main>
+  </div>
+  <script src="/admin.js" type="module"></script>
+</body>
+</html>

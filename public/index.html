@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lumen Studio｜摄影师作品与预约</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#top"><span class="mark">◐</span> Lumen Studio</a>
+    <nav>
+      <a href="#gallery">作品</a>
+      <a href="#booking">套餐与预约</a>
+      <a href="#lookup">查询/取消</a>
+      <a href="/admin">后台</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Portfolio · Booking · Schedule</p>
+        <h1>按风格浏览作品，选择套餐并锁定真实档期。</h1>
+        <p class="lead">系统检查的不只是拍摄起止：交通、布置、撤场、摄影师、助手和器材都会作为完整占用。等待确认与已锁定在页面上明确区分。</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#booking">立即预约</a>
+          <a class="button ghost" href="#models">两种竞争方式</a>
+        </div>
+      </div>
+      <div class="hero-card" aria-label="档期状态说明">
+        <div><span class="dot amber"></span><strong>等待确认</strong><p>请求已到服务器，尚未占用资源。</p></div>
+        <div><span class="dot blue"></span><strong>临时占位</strong><p>短时锁定，有到期时间，未确认不算成功。</p></div>
+        <div><span class="dot green"></span><strong>已锁定</strong><p>订单确认，完整资源窗口被保留。</p></div>
+      </div>
+    </section>
+
+    <section id="gallery" class="section">
+      <div class="section-heading">
+        <div><p class="eyebrow">Portfolio</p><h2>按风格查看相册</h2></div>
+        <div id="styleFilters" class="filters" role="group" aria-label="风格筛选"></div>
+      </div>
+      <div id="albumGrid" class="album-grid" aria-live="polite"></div>
+    </section>
+
+    <section id="booking" class="section split">
+      <div>
+        <p class="eyebrow">Booking</p>
+        <h2>选择套餐、时区与时间</h2>
+        <div id="draftBanner" class="notice hidden"></div>
+        <form id="bookingForm" class="card form">
+          <label>风格（筛选套餐）
+            <select id="packageStyle"></select>
+          </label>
+          <label>套餐
+            <select id="packageId" required></select>
+          </label>
+          <div id="packageDetails" class="package-details"></div>
+          <div class="grid-two">
+            <label>时区
+              <select id="timezone"></select>
+            </label>
+            <label>本地开始日期时间
+              <input id="startLocal" type="datetime-local" required />
+            </label>
+          </div>
+          <label class="check"><input id="ambiguity" type="checkbox" /> 若遇夏令时回拨重复小时，选择较晚的一次（默认较早）</label>
+          <p class="hint">切换时区不会改变已输入的本地钟面时间；所有比较都会转换为 UTC。</p>
+          <div class="grid-two">
+            <label>姓名<input id="name" required placeholder="你的姓名" /></label>
+            <label>邮箱<input id="email" type="email" required placeholder="name@example.com" /></label>
+          </div>
+          <div class="grid-two">
+            <label>电话<input id="phone" placeholder="可选" /></label>
+            <label>幂等键<input id="idempotencyKey" required /></label>
+          </div>
+          <label>备注<textarea id="notes" rows="3" placeholder="地点、风格偏好、问题等"></textarea></label>
+          <div class="button-row">
+            <button class="button primary" type="submit">提交预约（空闲即锁定，否则排队）</button>
+            <button class="button ghost" id="holdBtn" type="button">先短时占位</button>
+          </div>
+        </form>
+      </div>
+      <aside class="card sticky-panel">
+        <h3>档期窗口预估</h3>
+        <div id="preflight"></div>
+        <div id="bookingResult" aria-live="polite"></div>
+      </aside>
+    </section>
+
+    <section id="models" class="section">
+      <p class="eyebrow">Peak competition</p>
+      <h2>短租约占位 vs 提交即排队确认</h2>
+      <div class="model-grid">
+        <article class="card">
+          <h3>短租约占位（Hold）</h3>
+          <p>创建成功后立即锁定资源，仅保留短时间，例如 90 秒。适合填表和付款前防抢。</p>
+          <ul>
+            <li>必须在到期前携带同一幂等键确认，才生成订单。</li>
+            <li>到期自动释放，服务器不会把本地表单或占位当成功预订。</li>
+            <li>已有更早队列竞争同一资源时，不能用占位插队。</li>
+            <li>恰好在到期边界确认时，请求由串行事务裁决：未过期才成功，过期则恢复并触发队列。</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>提交即排队确认</h3>
+          <p>提交始终生成服务器订单：资源可用则立即确认；冲突则进入等待确认。</p>
+          <ul>
+            <li>等待确认不占资源，页面不会显示为已锁定。</li>
+            <li>取消、改期或占位到期后，按提交顺序恢复竞争。</li>
+            <li>互不相关的资源可并行确认；相关资源不能越过更早请求。</li>
+            <li>重复 POST 使用 idempotencyKey，只返回同一订单。</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="lookup" class="section split">
+      <form id="lookupForm" class="card form">
+        <p class="eyebrow">Manage</p>
+        <h2>查询预约并取消未开始的占用</h2>
+        <label>预约单号或 ID<input id="lookupId" required placeholder="BK-00001" /></label>
+        <label>预约邮箱<input id="lookupEmail" type="email" required /></label>
+        <button class="button primary">查询</button>
+      </form>
+      <div id="lookupResult" class="card sticky-panel" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <div id="lightbox" class="lightbox hidden" role="dialog" aria-modal="true" aria-label="照片灯箱">
+    <button id="lbClose" class="lb-close" aria-label="关闭">×</button>
+    <button id="lbPrev" class="lb-nav" aria-label="上一张">‹</button>
+    <figure>
+      <img id="lbImage" alt="" />
+      <figcaption id="lbCaption"></figcaption>
+      <p id="lbVersion" class="hint"></p>
+    </figure>
+    <button id="lbNext" class="lb-nav right" aria-label="下一张">›</button>
+  </div>
+
+  <footer class="footer">
+    <p>公开相册、封面与灯箱使用同一清单版本；授权撤销后媒体 URL 与封面会立即失效或切换。</p>
+  </footer>
+  <script src="/app.js" type="module"></script>
+</body>
+</html>
