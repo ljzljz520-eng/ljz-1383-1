@@ -1,0 +1,14 @@
+{
+  "name": "photographer-booking-site",
+  "version": "1.0.0",
+  "description": "摄影师作品展示、套餐选择、短租约占位/排队预约与后台档期管理系统",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "NODE_ENV=test PORT=3100 HOLD_TTL_MS=1000 node test/acceptance.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.10.0",
+    "express": "^4.21.2"
+  }
+}

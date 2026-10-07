@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>摄影预约管理后台</title><link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+<div class="admin-wrap">
+  <aside class="admin-side">
+    <h2>档期后台</h2>
+    <p class="small" style="color:#9fb0a7">短租约占位 / 排队确认 / 发布版本</p>
+    <div id="tokenBox" style="margin:18px 0">
+      <input id="tokenInput" placeholder="后台令牌" value="dev-admin-token" />
+      <button class="primary" id="tokenBtn" style="width:100%;margin-top:8px">进入</button>
+    </div>
+    <nav id="adminNav" hidden>
+      <a data-tab="bookings" class="active">预约与冲突解释</a>
+      <a data-tab="blocks">维护已占档期</a>
+      <a data-tab="packages">套餐与报价版本</a>
+      <a data-tab="albums">作品授权与发布</a>
+      <a data-tab="logs">人工改期记录</a>
+    </nav>
+  </aside>
+  <main class="admin-main">
+    <section id="bookings" class="admin-section active">
+      <h1>预约与冲突解释</h1>
+      <p class="small">“等待确认”包含短租约 held（临时占资源，会过期）和排队 queued（不占资源）；confirmed 才是已锁定。</p>
+      <div id="bookingsList"></div>
+    </section>
+    <section id="blocks" class="admin-section">
+      <h1>维护摄影师、助手、器材档期</h1>
+      <form id="blockForm" class="admin-form">
+        <label>资源<select id="blockResource" required></select></label>
+        <label>开始（浏览器本地时间，提交转 UTC）<input id="blockStart" type="datetime-local" required></label>
+        <label>结束（浏览器本地时间，提交转 UTC）<input id="blockEnd" type="datetime-local" required></label>
+        <label>原因<input id="blockReason" placeholder="器材维修/不可安排" required></label>
+        <button class="primary">加入停用/拦截</button>
+      </form>
+      <p class="small">输入使用 UTC ISO；若与现有档期冲突，系统先给出解释。强制保存只会建立后台拦截，不会自动删除客户锁定。</p>
+      <div id="blockList"></div>
+    </section>
+    <section id="packages" class="admin-section">
+      <h1>套餐与报价版本</h1>
+      <p class="small">修改 current_price_cents / 服务范围后，已预约订单仍保留 package_snapshot。金额单位为分。</p>
+      <div id="packageList"></div>
+    </section>
+    <section id="albums" class="admin-section">
+      <h1>作品授权、封面与发布版本</h1>
+      <p class="small">撤销授权先进入待发布版本；发布后灯箱序列、封面和公开授权统一到新版本。</p>
+      <div id="albumAdminList"></div>
+    </section>
+    <section id="logs" class="admin-section">
+      <h1>人工改期与系统记录</h1>
+      <div class="table-wrap"><table><thead><tr><th>时间</th><th>预约</th><th>动作</th><th>详情</th><th>操作者</th></tr></thead><tbody id="logsBody"></tbody></table></div>
+    </section>
+  </main>
+</div>
+<div id="toastHost"></div>
+<script src="/admin.js"></script>
+</body>
+</html>

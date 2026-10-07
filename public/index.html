@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>林光影像 · 摄影师作品与预约</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="#gallery"><span class="aperture">◉</span> 林光影像</a>
+  <nav>
+    <a href="#gallery">作品</a>
+    <a href="#booking">套餐与档期</a>
+    <a href="/admin">管理后台</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <p class="eyebrow">PORTFOLIO & BOOKING</p>
+      <h1>按风格浏览作品，再选择套餐与真实可拍档期</h1>
+      <p class="lead">占位不是预订成功：短租约占位会明确倒计时；排队等待不锁定资源；只有“已锁定”才占用摄影师、助手、器材及交通布置时间。</p>
+    </div>
+    <div class="hero-card">
+      <strong>状态怎么看？</strong>
+      <ul>
+        <li><span class="pill draft">草稿</span> 仅本机恢复，不占资源</li>
+        <li><span class="pill held">等待确认</span> 短期占位，可能过期</li>
+        <li><span class="pill queued">排队中</span> 等后台确认，不锁定</li>
+        <li><span class="pill confirmed">已锁定</span> 报价和资源确认</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="gallery" class="section">
+    <div class="section-title">
+      <div><p class="eyebrow">PORTFOLIO</p><h2>按风格看相册</h2></div>
+      <div id="styleFilters" class="filters"></div>
+    </div>
+    <div id="albumGrid" class="album-grid"></div>
+  </section>
+
+  <section id="booking" class="section booking-section">
+    <div class="section-title">
+      <div><p class="eyebrow">BOOKING</p><h2>选择套餐、资源与日期</h2></div>
+    </div>
+    <div class="booking-layout">
+      <form id="bookingForm" class="card form-card">
+        <div id="draftNotice" class="notice draft-notice hidden"></div>
+        <label>套餐
+          <select id="packageSelect" required></select>
+        </label>
+        <div id="packageInfo" class="package-info"></div>
+        <fieldset>
+          <legend>需要占用的资源（摄影师/助手/器材）</legend>
+          <div id="resourceChoices" class="resource-list"></div>
+        </fieldset>
+        <div class="grid-2">
+          <label>查看/输入时区
+            <select id="timezoneSelect">
+              <option value="Asia/Shanghai">Asia/Shanghai 北京时间</option>
+              <option value="Asia/Tokyo">Asia/Tokyo 东京</option>
+              <option value="Europe/London">Europe/London 伦敦</option>
+              <option value="America/New_York">America/New_York 纽约</option>
+              <option value="UTC">UTC 协调世界时</option>
+            </select>
+          </label>
+          <label>开拍时间（按所选时区显示）
+            <input id="startAt" type="datetime-local" step="900" required />
+          </label>
+        </div>
+        <div id="phaseSummary" class="phase-summary">选择时间后显示交通、布置、正式拍摄、撤场和返程区间。</div>
+        <div class="grid-2">
+          <label>称呼 <input id="customerName" placeholder="例如 王女士" required /></label>
+          <label>手机或邮箱 <input id="customerContact" placeholder="用于确认订单" required /></label>
+        </div>
+        <label>备注 <textarea id="note" rows="3" placeholder="地点、服装、特殊流程等"></textarea></label>
+        <div class="button-row">
+          <button type="button" id="checkBtn" class="secondary">检查档期</button>
+          <button type="submit" id="holdBtn" class="primary">短租约占位</button>
+          <button type="button" id="queueBtn" class="secondary">高峰排队提交</button>
+        </div>
+        <p class="hint">重复点击不会产生两份预约：相同幂等键会返回原订单。建议高峰直接排队，后台确认后锁定。</p>
+      </form>
+
+      <aside class="card side-card">
+        <h3>档期检查与预约结果</h3>
+        <div id="resultPanel" class="result-panel empty">尚未提交。这里会清楚区分等待确认与已锁定。</div>
+        <div id="conflictPanel"></div>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<div id="lightbox" class="lightbox hidden" role="dialog" aria-modal="true">
+  <button id="lbClose" class="lb-close" aria-label="关闭">×</button>
+  <button id="lbPrev" class="lb-nav" aria-label="上一张">‹</button>
+  <figure><img id="lbImage" alt="" /><figcaption id="lbCaption"></figcaption></figure>
+  <button id="lbNext" class="lb-nav right" aria-label="下一张">›</button>
+  <div id="lbMeta" class="lb-meta"></div>
+</div>
+
+<template id="albumTemplate">
+  <article class="album-card">
+    <img class="cover" alt="" />
+    <div class="album-body">
+      <span class="style-tag"></span>
+      <h3></h3>
+      <p class="desc"></p>
+      <button class="secondary open-album">查看授权灯箱序列</button>
+    </div>
+  </article>
+</template>
+
+<script src="/app.js"></script>
+</body>
+</html>
